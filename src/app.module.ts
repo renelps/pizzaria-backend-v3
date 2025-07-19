@@ -3,6 +3,10 @@ import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from './prisma/prisma.module';
 import { PizzaModule } from './pizza/pizza.module';
 import { AuthModule } from './auth/auth.module';
+import { OrderModule } from './orders/orders.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { DeliveryModule } from './delivery/delivery.module';
+import { StockMovementsModule } from './stockMovements/stock-movements.module';
 
 @Module({
   imports: [
@@ -10,6 +14,10 @@ import { AuthModule } from './auth/auth.module';
     PrismaModule,
     PizzaModule,
     AuthModule,
+    OrderModule,
+    ReviewsModule,
+    DeliveryModule,
+    StockMovementsModule
   ],
 })
 export class AppModule {}
