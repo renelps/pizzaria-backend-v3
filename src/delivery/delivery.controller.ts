@@ -1,4 +1,4 @@
-import {
+import { 
   Controller,
   Post,
   Body,
@@ -69,7 +69,7 @@ export class DeliveryController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a delivery details' })
+  @ApiOperation({ summary: 'Update delivery details' })
   @ApiParam({ name: 'id', description: 'Delivery ID', type: Number })
   @ApiBody({ type: UpdateDeliveryDto })
   @ApiResponse({ status: 200, description: 'Delivery updated successfully.' })

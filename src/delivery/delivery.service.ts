@@ -3,8 +3,10 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { GeoService } from '../shared/geo.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
@@ -13,7 +15,10 @@ import { DeliveryStatus } from '@prisma/client';
 
 @Injectable()
 export class DeliveryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private geoService: GeoService,
+  ) {}
 
   async createAddress(userId: number, data: CreateAddressDto) {
     return this.prisma.address.create({
@@ -49,6 +54,16 @@ export class DeliveryService {
     if (address.userId !== userId)
       throw new ForbiddenException('You do not own this address');
 
+    const origin = 'LATITUDE_RESTAURANTE,LONGITUDE_RESTAURANTE'; 
+    const destination = `${address.latitude},${address.longitude}`;
+
+    let geoInfo;
+    try {
+      geoInfo = await this.geoService.getDistanceAndDuration(origin, destination);
+    } catch (error) {
+      throw new InternalServerErrorException('Erro ao calcular distância e duração');
+    }
+
     return this.prisma.delivery.create({
       data: {
         orderId: data.orderId,
@@ -56,6 +71,8 @@ export class DeliveryService {
         status: data.status,
         estimatedAt: data.estimatedAt ? new Date(data.estimatedAt) : undefined,
         deliveredAt: data.deliveredAt ? new Date(data.deliveredAt) : undefined,
+        distance: geoInfo.distanceText,
+        duration: geoInfo.durationText,
       },
     });
   }

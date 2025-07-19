@@ -115,6 +115,9 @@ model Delivery {
   status      DeliveryStatus @default(PENDING)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+
+  distance    String?
+  duration    String?
 }
 
 enum Role {

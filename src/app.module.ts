@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from './prisma/prisma.module';
 import { PizzaModule } from './pizza/pizza.module';
@@ -10,6 +11,7 @@ import { StockMovementsModule } from './stockMovements/stock-movements.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     PrismaModule,
     PizzaModule,
@@ -17,7 +19,7 @@ import { StockMovementsModule } from './stockMovements/stock-movements.module';
     OrderModule,
     ReviewsModule,
     DeliveryModule,
-    StockMovementsModule
+    StockMovementsModule,
   ],
 })
 export class AppModule {}

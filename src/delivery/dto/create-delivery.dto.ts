@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsInt, IsOptional } from 'class-validator';
+import { IsDateString, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { DeliveryStatus } from '@prisma/client';
 
@@ -24,4 +24,14 @@ export class CreateDeliveryDto {
   @IsDateString()
   @IsOptional()
   deliveredAt?: string;
+
+  @ApiPropertyOptional({ example: '15.4 km', description: 'Distance of the delivery route' })
+  @IsString()
+  @IsOptional()
+  distance?: string;
+
+  @ApiPropertyOptional({ example: '30 mins', description: 'Duration of the delivery route' })
+  @IsString()
+  @IsOptional()
+  duration?: string;
 }
