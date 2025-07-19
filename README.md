@@ -70,11 +70,15 @@ src/
 - Dashboard para administrador  
 - Upload de imagens (ex: Cloudinary)  
 - Suporte a multi-idiomas  
-- Logs e métricas avançadas  
+- Logs e métricas avançadas
+- Testes automatizados com biblioteca de testes (ex: Jest)
+- Pipeline de CI/CD com GitHub Actions
+- Containerização com Docker
+- Deploy e serviços com AWS (S3, EC2, RDS)
 
 ## 👨‍💻 Autor
 
-Desenvolvido por **Renan Gabriel** — Full Stack Developer.
+Desenvolvido por [**Renan Gabriel**](https://github.com/renelps) — Full Stack Developer.
 
 ## 📝 Licença
 
