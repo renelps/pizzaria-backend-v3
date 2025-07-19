@@ -53,19 +53,17 @@ Este é um projeto backend completo para gerenciamento de pedidos de uma pizzari
 
 ## 🗂 Estrutura de Pastas
 
-\```
-src/
-├── auth/             # Login, guards e estratégias JWT
-├── delivery/         # Entregas, endereços e Google Maps
-├── orders/           # Pedidos + WebSocket
-├── payments/         # Pagamentos com Stripe
-├── pizza/            # CRUD de pizzas com filtros
-├── reviews/          # Sistema de avaliações
-├── stockMovements/   # Movimentações de estoque
-├── prisma/           # Serviço do Prisma
-├── app.module.ts     # Módulo principal
-└── main.ts           # Entrypoint da aplicação
-\```
+src/  
+├── auth/             # Login, guards e estratégias JWT  
+├── delivery/         # Entregas, endereços e Google Maps  
+├── orders/           # Pedidos + WebSocket  
+├── payments/         # Pagamentos com Stripe  
+├── pizza/            # CRUD de pizzas com filtros  
+├── reviews/          # Sistema de avaliações  
+├── stockMovements/   # Movimentações de estoque  
+├── prisma/           # Serviço do Prisma  
+├── app.module.ts     # Módulo principal  
+└── main.ts           # Entrypoint da aplicação  
 
 ## 📌 Melhorias Futuras
 
@@ -81,9 +79,3 @@ Desenvolvido por **Renan Gabriel** — Full Stack Developer.
 ## 📝 Licença
 
 Este projeto está sob a licença **MIT**.
-
----
-
-## 📝 Licença
-
-Este projeto está sob a licença [MIT](LICENSE).
