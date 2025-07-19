@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pizza {
+  id              Int              @id @default(autoincrement())
+  slug            String           @unique
+  price           Float
+  imageUrl        String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  stock           Int              @default(0)
+  translations    PizzaTranslation[]
+  reviews         Review[]
+  orderPizzas     OrderPizza[]
+  stockMovements  StockMovement[]
+}
+
+model PizzaTranslation {
+  id          Int      @id @default(autoincrement())
+  pizza       Pizza    @relation(fields: [pizzaId], references: [id])
+  pizzaId     Int
+  locale      String
+  name        String
+  description String?
+
+  @@unique([pizzaId, locale])
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  password   String
+  role       Role      @default(USER)
+  refreshToken  String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  orders     Order[]
+  reviews    Review[]
+  addresses  Address[]
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  user        User        @relation(fields: [userId], references: [id])
+  userId      Int
+  status      OrderStatus @default(PENDING)
+  total       Float
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderPizzas OrderPizza[]
+  delivery    Delivery?
+}
+
+model OrderPizza {
+  id        Int    @id @default(autoincrement())
+  order     Order  @relation(fields: [orderId], references: [id])
+  orderId   Int
+  pizza     Pizza  @relation(fields: [pizzaId], references: [id])
+  pizzaId   Int
+  quantity  Int
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  pizza     Pizza    @relation(fields: [pizzaId], references: [id])
+  pizzaId   Int
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StockMovement {
+  id        Int      @id @default(autoincrement())
+  pizza     Pizza    @relation(fields: [pizzaId], references: [id])
+  pizzaId   Int
+  quantity  Int
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+model Address {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  street     String
+  number     String
+  city       String
+  state      String
+  zipCode    String
+  country    String   @default("Brasil")
+  latitude   Float?
+  longitude  Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  delivery   Delivery?
+}
+
+model Delivery {
+  id          Int            @id @default(autoincrement())
+  order       Order          @relation(fields: [orderId], references: [id])
+  orderId     Int            @unique
+  address     Address        @relation(fields: [addressId], references: [id])
+  addressId   Int            @unique
+  estimatedAt DateTime?
+  deliveredAt DateTime?
+  status      DeliveryStatus @default(PENDING)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum OrderStatus {
+  PENDING
+  PREPARING
+  PAID
+  SENT
+  DELIVERED
+  CANCELLED
+}
+
+enum DeliveryStatus {
+  PENDING
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
