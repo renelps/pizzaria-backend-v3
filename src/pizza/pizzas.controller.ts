@@ -9,8 +9,19 @@ import {
   UseGuards,
   ParseIntPipe,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiParam,
+} from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 import { PizzaService } from './pizzas.service';
 import { CreatePizzaDto } from './dto/create-pizza.dto';
 import { UpdatePizzaDto } from './dto/update-pizza.dto';
@@ -18,13 +29,17 @@ import { FilterPizzaDto } from './dto/filter-pizza.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @ApiTags('Pizzas')
 @ApiBearerAuth()
 @Controller('pizzas')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class PizzaController {
-  constructor(private readonly pizzaService: PizzaService) {}
+  constructor(
+    private readonly pizzaService: PizzaService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Get()
   @Roles('ADMIN', 'USER')
@@ -54,10 +69,35 @@ export class PizzaController {
 
   @Post()
   @Roles('ADMIN')
-  @ApiOperation({ summary: 'Create a new pizza' })
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiOperation({ summary: 'Create a new pizza with image upload' })
   @ApiResponse({ status: 201, description: 'Pizza created' })
-  async create(@Body() data: CreatePizzaDto) {
-    return this.pizzaService.create(data);
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: any,
+  ) {
+    let translations = [];
+    if (body.translations) {
+      try {
+        translations = JSON.parse(body.translations);
+      } catch (err) {
+        throw new Error('Invalid JSON in translations field');
+      }
+    }
+
+    let imageUrl = null;
+    if (file) {
+      const result = await this.cloudinaryService.uploadImage(file);
+      imageUrl = result.secure_url;
+    }
+
+    const pizzaData: CreatePizzaDto = {
+      ...body,
+      translations,
+      imageUrl,
+    };
+
+    return this.pizzaService.create(pizzaData);
   }
 
   @Put(':id')
