@@ -62,17 +62,11 @@ export class PaymentsController {
     @Headers('stripe-signature') signature: string,
   ) {
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
-
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-      apiVersion: '2025-06-30.basil',
-    });
-
     let event: Stripe.Event;
 
     try {
-      event = stripe.webhooks.constructEvent(req.body, signature, endpointSecret);
+      event = this.stripeService.constructWebhookEvent(req.body, signature, endpointSecret);
     } catch (err) {
-      console.error('Webhook signature verification failed.', (err as Error).message);
       return res.status(400).send(`Webhook Error: ${(err as Error).message}`);
     }
 
@@ -80,15 +74,10 @@ export class PaymentsController {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       const orderId = paymentIntent.metadata.orderId;
 
-      console.log(`Payment for order ${orderId} succeeded.`);
-
       if (orderId) {
         try {
           await this.orderService.updateStatus(Number(orderId), OrderStatus.PAID);
-          console.log(`Order ${orderId} status updated to PAID.`);
-        } catch (error) {
-          console.error(`Failed to update order status for order ${orderId}:`, error);
-        }
+        } catch (error) {}
       }
     }
 
