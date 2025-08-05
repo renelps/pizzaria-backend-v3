@@ -12,7 +12,8 @@ Este é um projeto backend completo para gerenciamento de pedidos de uma pizzari
 - Swagger (nestjs/swagger) — Documentação automática da API  
 - WebSockets — Comunicação em tempo real  
 - JWT — Autenticação com tokens  
-- Google Maps API — Cálculo de distância e duração para entregas  
+- Google Maps API — Cálculo de distância e duração para entregas
+- Jest — Testes automatizados para a API (controle e services)
 
 ## 📁 Módulos e Funcionalidades
 
@@ -83,3 +84,4 @@ Desenvolvido por [**Renan Gabriel**](https://github.com/renelps) — Full Stack 
 ## 📝 Licença
 
 Este projeto está sob a licença **MIT**.
+
